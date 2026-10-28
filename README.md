@@ -8,7 +8,6 @@
 - **NIM:** H1D024115
 - **Shift Awal:** I
 - **Shift Akhir:** E
-- **Link Video Demo/Penjelasan:** https://drive.google.com/drive/folders/1-isIgwXs4V0TUefARiSJ-jiV78w1qClD?usp=drive_link
 
 ---
 
