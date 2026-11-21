@@ -13,7 +13,7 @@
 
 ## 📱 Deskripsi Aplikasi
 
-Belajar Flutter merupakan proyek latihan mata kuliah Pemrograman Mobile yang dikembangkan menggunakan framework Flutter dan bahasa pemrograman Dart. Proyek ini mencakup pembelajaran bertahap dari dasar pembuatan antarmuka (widget & layouting), sistem navigasi dan routing, menu samping (side menu/drawer), autentikasi login, penyimpanan lokal (*local storage*) menggunakan `shared_preferences`, hingga perancangan arsitektur data model dan antarmuka operasi CRUD (*Create, Read, Update, Delete*).
+Belajar Flutter merupakan proyek latihan mata kuliah Pemrograman Mobile yang dikembangkan menggunakan framework Flutter dan bahasa pemrograman Dart. Proyek ini mencakup pembelajaran komprehensif mulai dari dasar widget dan layouting, routing dan side menu, autentikasi sesi dengan local storage, perancangan arsitektur antarmuka dan data model CRUD, hingga **integrasi penuh ke REST API backend (CodeIgniter 4)** menggunakan pola BLoC (*Business Logic Component*), HTTP client, dan dialog feedback kustom.
 
 Aplikasi ini dikembangkan menggunakan Android Studio dan dapat dijalankan pada perangkat Android, Emulator, maupun Web Browser (Chrome).
 
@@ -29,9 +29,11 @@ Aplikasi ini dikembangkan menggunakan Android Studio dan dapat dijalankan pada p
 - **Flutter SDK:** `D:\flutter`
 - **Target Perangkat:** Android & Web
 - **UI Framework:** Material Design
+- **Backend API:** CodeIgniter 4 RESTful API & MySQL Database (`toko_api`)
 - **Dependencies Utama:**
   - `cupertino_icons: ^1.0.8` (Ikonografi Cupertino/iOS style)
   - `shared_preferences: ^2.0.17` (Penyimpanan data lokal / Local Storage)
+  - `http: ^1.1.0` (Komunikasi dan request HTTP ke RESTful API)
 
 ### 2. Fitur Utama Berdasarkan Modul
 
@@ -62,13 +64,29 @@ Aplikasi ini dikembangkan menggunakan Android Studio dan dapat dijalankan pada p
   - Validasi password (minimal 6 karakter & `obscureText`).
   - Validasi konfirmasi password (pencocokan dengan input password).
 - **Halaman Login Toko (`ui/login_page.dart`):** Form login dengan validasi email dan password serta tautan navigasi langsung ke halaman Registrasi.
-- **Form Produk Dual-Mode (`produk_form.dart`):** Form fleksibel dengan deteksi otomatis mode operasi:
-  - Mode Tambah: Judul *"TAMBAH PRODUK"* dengan tombol submit *"SIMPAN"*.
-  - Mode Ubah/Edit: Judul *"UBAH PRODUK"* dengan tombol submit *"UBAH"* dan input textfield terisi otomatis dengan data produk yang dipilih.
-- **Detail Produk (`produk_detail.dart`):** Menampilkan detail kode, nama, dan harga produk beserta dua aksi utama:
-  - Tombol **EDIT** untuk mengarahkan pengguna ke form dalam mode ubah.
-  - Tombol **DELETE** yang dilengkapi dengan dialog konfirmasi konfirmasi penghapusan data.
-- **Daftar Produk (`produk_page.dart`):** Menampilkan daftar katalog produk menggunakan `ListView` & `Card`, tombol tambah produk (**+**) pada AppBar, drawer dengan menu Logout, dan interaksi tap untuk membuka detail produk.
+- **Form Produk Dual-Mode (`produk_form.dart`):** Form fleksibel dengan deteksi otomatis mode operasi (Tambah vs Ubah).
+- **Detail Produk (`produk_detail.dart`):** Menampilkan detail kode, nama, dan harga produk beserta aksi EDIT dan DELETE.
+- **Daftar Produk (`produk_page.dart`):** Menampilkan daftar katalog produk, tombol tambah (+), drawer dengan logout, dan interaksi tap ke detail produk.
+
+#### 🔹 Modul 5: Integrasi REST API & Helper Modul
+- **Helper & Utility (`lib/helpers/`):**
+  - `UserInfo`: Mengelola penyimpanan token otentikasi Bearer dan User ID di local storage secara asinkron.
+  - `AppException`: Sistem penanganan error jaringan terpusat (`FetchDataException`, `BadRequestException`, `UnauthorisedException`, dll).
+  - `Api`: Wrapper HTTP client untuk method `GET`, `POST`, dan `DELETE` yang otomatis menyertakan header authorization token.
+  - `ApiUrl`: Konfigurasi terpusat alamat endpoint REST API backend.
+- **Business Logic Component (`lib/bloc/`):**
+  - `RegistrasiBloc`: Menangani request pendaftaran akun baru ke endpoint `/registrasi`.
+  - `LoginBloc`: Menangani autentikasi login ke endpoint `/login` dan menerima token otentikasi.
+  - `LogoutBloc`: Menghapus session dan token pengguna saat keluar aplikasi.
+  - `ProdukBloc`: Menangani seluruh alur data produk: `getProduks()` (GET), `addProduk()` (POST), `updateProduk()` (PUT/POST), dan `deleteProduk()` (DELETE).
+- **Custom Feedback Dialogs (`lib/widget/`):**
+  - `SuccessDialog`: Dialog notifikasi visual saat operasi sukses (hijau).
+  - `WarningDialog`: Dialog peringatan saat operasi gagal atau terjadi kesalahan (merah).
+- **Integrasi Penuh ke Aplikasi:**
+  - Auto-login check di `main.dart` (jika token tersimpan langsung ke `ProdukPage`, jika belum ke `LoginPage`).
+  - Registrasi & Login terhubung ke server backend dengan dialog feedback interaktif.
+  - `ProdukPage` mengambil data langsung dari API menggunakan `FutureBuilder`.
+  - Tambah, Ubah, dan Hapus produk terhubung langsung ke database backend via REST API.
 
 ---
 
@@ -79,7 +97,7 @@ belajarflutter/
 ├── android/
 ├── ios/
 ├── lib/
-│   ├── main.dart                  # File utama (Entry point aplikasi)
+│   ├── main.dart                  # File utama & auto-check session login
 │   │
 │   # Modul 2 - Dasar Widget
 │   ├── hello_world.dart           # Latihan Hello World
@@ -92,17 +110,38 @@ belajarflutter/
 │   ├── sidemenu.dart              # Komponen Side Menu (Drawer Navigasi)
 │   ├── about_page.dart            # Halaman About
 │   │
-│   # Modul 4 - Operasi CRUD (Model & UI)
-│   ├── model/                     # Data Model
+│   # Modul 4 & 5 - Data Models
+│   ├── model/
 │   │   ├── login.dart             # Model Login & Parsing JSON
 │   │   ├── produk.dart            # Model Produk & Parsing JSON
 │   │   └── registrasi.dart        # Model Registrasi & Parsing JSON
-│   └── ui/                        # Antarmuka Pengguna Modul 4
-│       ├── login_page.dart        # Halaman Login Toko Kita
-│       ├── registrasi_page.dart   # Halaman Registrasi Akun
-│       ├── produk_page.dart       # Halaman List Produk (Katalog)
-│       ├── produk_detail.dart     # Halaman Detail Produk & Aksi
-│       └── produk_form.dart       # Form Produk (Tambah & Edit)
+│   │
+│   # Modul 5 - Helpers & Network Layer
+│   ├── helpers/
+│   │   ├── api.dart               # HTTP Client Wrapper (GET, POST, DELETE)
+│   │   ├── api_url.dart           # Daftar Endpoint REST API
+│   │   ├── app_exception.dart     # Error Handling Exception
+│   │   └── user_info.dart         # Helper Session Token (SharedPreferences)
+│   │
+│   # Modul 5 - BLoC (Business Logic Component)
+│   ├── bloc/
+│   │   ├── login_bloc.dart        # BLoC Autentikasi Login
+│   │   ├── logout_bloc.dart       # BLoC Logout Session
+│   │   ├── produk_bloc.dart       # BLoC Operasi CRUD Produk
+│   │   └── registrasi_bloc.dart   # BLoC Pendaftaran Pengguna
+│   │
+│   # Modul 5 - Custom Widgets
+│   ├── widget/
+│   │   ├── success_dialog.dart    # Dialog Notifikasi Sukses
+│   │   └── warning_dialog.dart    # Dialog Notifikasi Gagal/Peringatan
+│   │
+│   # Antarmuka Pengguna (UI) Terintegrasi API
+│   └── ui/
+│       ├── login_page.dart        # Halaman Login Terintegrasi API
+│       ├── registrasi_page.dart   # Halaman Registrasi Terintegrasi API
+│       ├── produk_page.dart       # List Produk dari API (FutureBuilder)
+│       ├── produk_detail.dart     # Detail Produk & Aksi Hapus API
+│       └── produk_form.dart       # Form Tambah & Ubah Produk API
 ├── test/
 ├── pubspec.yaml                   # Konfigurasi dependensi Flutter
 ├── pubspec.lock
@@ -121,12 +160,17 @@ belajarflutter/
 ### Modul 3 — Routes, Side Menu, Login & Local Storage
 | Login Modul 3 | Home Page (User Admin) | Side Menu (Drawer) |
 |:---:|:---:|:---:|
-| <img width="235" height="519" alt="WhatsApp Image 2026-11-17 at 14 31 16" src="https://github.com/user-attachments/assets/963f47dd-519a-4f75-8458-1ac89232c0ba" /> | <img width="238" height="525" alt="WhatsApp Image 2026-11-17 at 14 32 07" src="https://github.com/user-attachments/assets/6d31ad4b-3466-4468-ad9b-20a2261e8dea" /> | <img width="231" height="524" alt="WhatsApp Image 2026-11-17 at 14 32 42" src="https://github.com/user-attachments/assets/040de4aa-42fb-494f-a432-a34a7ef1b032" />
+| <img width="120" src="https://github.com/user-attachments/assets/963f47dd-519a-4f75-8458-1ac89232c0ba" /> | <img width="120" src="https://github.com/user-attachments/assets/6d31ad4b-3466-4468-ad9b-20a2261e8dea" /> | <img width="120" src="https://github.com/user-attachments/assets/040de4aa-42fb-494f-a432-a34a7ef1b032" /> |
 
-### Modul 4 — Operasi CRUD Toko Kita
+### Modul 4 — Operasi CRUD Toko Kita (UI Mockup)
 | List Produk | Detail Produk | Form Tambah Produk | Form Ubah Produk | Dialog Konfirmasi Hapus | Login Toko Kita | Registrasi Akun |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| <img width="248" height="553" alt="image" src="https://github.com/user-attachments/assets/f6c21394-fe73-4d7e-a5d1-3557ba2c2ddb" /> | <img width="250" height="554" alt="image" src="https://github.com/user-attachments/assets/193ebbcf-3d8a-4c87-b8d7-20a589d0eba3" /> | <img width="249" height="551" alt="image" src="https://github.com/user-attachments/assets/9c00cb63-56d6-49bf-b962-c09a6ff0c2f8" /> | <img width="249" height="553" alt="image" src="https://github.com/user-attachments/assets/39b2eb15-bec6-4796-b870-16c1bf56d111" /> | <img width="252" height="553" alt="image" src="https://github.com/user-attachments/assets/21bc1956-713c-414c-a13c-ec55d3a7ab1a" /> | <img width="251" height="555" alt="image" src="https://github.com/user-attachments/assets/d2b756b4-d21b-4f92-b1a6-c03fe4701f36" /> | <img width="249" height="551" alt="image" src="https://github.com/user-attachments/assets/d7d0e9f2-64d9-45a6-a4a7-786babe0eaca" /> |
+| <img width="120" src="https://github.com/user-attachments/assets/f6c21394-fe73-4d7e-a5d1-3557ba2c2ddb" /> | <img width="120" src="https://github.com/user-attachments/assets/193ebbcf-3d8a-4c87-b8d7-20a589d0eba3" /> | <img width="120" src="https://github.com/user-attachments/assets/9c00cb63-56d6-49bf-b962-c09a6ff0c2f8" /> | <img width="120" src="https://github.com/user-attachments/assets/39b2eb15-bec6-4796-b870-16c1bf56d111" /> | <img width="120" src="https://github.com/user-attachments/assets/21bc1956-713c-414c-a13c-ec55d3a7ab1a" /> | <img width="120" src="https://github.com/user-attachments/assets/d2b756b4-d21b-4f92-b1a6-c03fe4701f36" /> | <img width="120" src="https://github.com/user-attachments/assets/d7d0e9f2-64d9-45a6-a4a7-786babe0eaca" /> |
+
+### Modul 5 — Integrasi Penuh REST API & BLoC
+| Auto-Login / Login API | Dialog Sukses Registrasi | Dialog Gagal Login | List Produk (FutureBuilder API) | Detail & Dialog Hapus API | Form Tambah ke API | Form Ubah ke API |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| <img width="120" src="" /> | <img width="120" src="" /> | <img width="120" src="" /> | <img width="120" src="" /> | <img width="120" src="" /> | <img width="120" src="" /> | <img width="120" src="" /> |
 
 ---
 
@@ -136,23 +180,18 @@ belajarflutter/
 
 - Android Studio / VS Code
 - Flutter SDK (terkonfigurasi pada environment path, misal: `D:\flutter`)
-- Android SDK & Build Tools
-- Plugin Flutter dan Dart pada IDE
+- XAMPP (Apache & MySQL aktif untuk menjalankan REST API `toko-api`)
 - Perangkat Android dengan USB Debugging aktif, Emulator, atau Google Chrome
 
 ### 2. Langkah Menjalankan
 
-1. Buka folder project `belajarflutter` di Android Studio atau VS Code.
-2. Buka terminal pada folder project.
-3. Unduh seluruh dependensi proyek dengan menjalankan:
+1. Pastikan web server Apache dan MySQL pada **XAMPP Control Panel** dalam keadaan **Running**.
+2. Buka folder project `belajarflutter` di Android Studio atau VS Code.
+3. Buka terminal pada folder project dan unduh dependensi:
    ```bash
    flutter pub get
    ```
-4. Cek perangkat yang tersedia:
-   ```bash
-   flutter devices
-   ```
-5. Jalankan aplikasi pada perangkat yang dipilih:
+4. Jalankan aplikasi pada perangkat yang dipilih:
    ```bash
    # Menjalankan pada perangkat Android
    flutter run
@@ -160,31 +199,3 @@ belajarflutter/
    # Atau menjalankan pada Web Chrome
    flutter run -d chrome
    ```
-
-### 3. Memilih Modul yang Ingin Dijalankan
-
-Untuk berganti tampilan modul pada saat aplikasi pertama kali dibuka, ubah properti `home` pada file `lib/main.dart`:
-
-- **Menjalankan Modul 3 (Login & Side Menu):**
-  ```dart
-  import 'package:flutter/material.dart';
-  import 'package:belajarflutter/login_page.dart';
-
-  void main() => runApp(const MaterialApp(home: LoginPage()));
-  ```
-
-- **Menjalankan Modul 4 (List Produk Toko Kita):**
-  ```dart
-  import 'package:flutter/material.dart';
-  import 'package:belajarflutter/ui/produk_page.dart';
-
-  void main() => runApp(const MaterialApp(home: ProdukPage()));
-  ```
-
-- **Menjalankan Modul 4 (Login & Registrasi Toko Kita):**
-  ```dart
-  import 'package:flutter/material.dart';
-  import 'package:belajarflutter/ui/login_page.dart';
-
-  void main() => runApp(const MaterialApp(home: LoginPage()));
-  ```
