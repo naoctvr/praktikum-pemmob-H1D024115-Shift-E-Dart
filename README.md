@@ -168,10 +168,9 @@ belajarflutter/
 | <img width="120" src="https://github.com/user-attachments/assets/f6c21394-fe73-4d7e-a5d1-3557ba2c2ddb" /> | <img width="120" src="https://github.com/user-attachments/assets/193ebbcf-3d8a-4c87-b8d7-20a589d0eba3" /> | <img width="120" src="https://github.com/user-attachments/assets/9c00cb63-56d6-49bf-b962-c09a6ff0c2f8" /> | <img width="120" src="https://github.com/user-attachments/assets/39b2eb15-bec6-4796-b870-16c1bf56d111" /> | <img width="120" src="https://github.com/user-attachments/assets/21bc1956-713c-414c-a13c-ec55d3a7ab1a" /> | <img width="120" src="https://github.com/user-attachments/assets/d2b756b4-d21b-4f92-b1a6-c03fe4701f36" /> | <img width="120" src="https://github.com/user-attachments/assets/d7d0e9f2-64d9-45a6-a4a7-786babe0eaca" /> |
 
 ### Modul 5 — Integrasi Penuh REST API & BLoC
-| Auto-Login / Login API | Dialog Sukses Registrasi | Dialog Gagal Login | List Produk (FutureBuilder API) | Detail & Dialog Hapus API | Form Tambah ke API | Form Ubah ke API |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| <img width="120" src="" /> | <img width="120" src="" /> | <img width="120" src="" /> | <img width="120" src="" /> | <img width="120" src="" /> | <img width="120" src="" /> | <img width="120" src="" /> |
-
+| Dialog Sukses Registrasi | Dialog Gagal Login | List Produk | Logout | Registrasi | 
+|:---:|:---:|:---:|:---:|:---:|
+| <img width="247" height="553" alt="WhatsApp Image 2026-11-25 at 19 41 25" src="https://github.com/user-attachments/assets/af9b0825-5170-41ad-b08c-4b80baf825bf" /> | <img width="250" height="553" alt="WhatsApp Image 2026-11-25 at 19 41 16" src="https://github.com/user-attachments/assets/024f64d1-9475-42a7-88a9-7ddd08bd9e96" /> | <img width="250" height="553" alt="WhatsApp Image 2026-11-25 at 19 41 16 (2)" src="https://github.com/user-attachments/assets/08bbe75a-fde8-46de-bc74-c08b3d62bc34" /> | <img width="249" height="554" alt="WhatsApp Image 2026-11-25 at 19 40 48" src="https://github.com/user-attachments/assets/d3c985e1-0bac-469c-a856-8d672c09ab99" /> | <img width="246" height="551" alt="WhatsApp Image 2026-11-25 at 19 41 16 (1)" src="https://github.com/user-attachments/assets/458535d6-69d8-4e64-8c26-221adc6999bd" /> | 
 ---
 
 ## 🚀 Cara Menjalankan Proyek
